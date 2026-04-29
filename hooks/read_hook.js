@@ -5,11 +5,17 @@ async function main() {
   }
   const toolArgs = JSON.parse(Buffer.concat(chunks).toString());
 
-  // readPath is the path to the file that Claude is trying to read
+  // Check file path for Read tool
   const readPath =
     toolArgs.tool_input?.file_path || toolArgs.tool_input?.path || "";
 
-  // TODO: ensure Claude isn't trying to read the .env file
+  // Check command string for Bash tool
+  const command = toolArgs.tool_input?.command || "";
+
+  if (readPath.includes(".env") || command.includes(".env")) {
+    console.error("You cannot read the .env file");
+    process.exit(2);
+  }
 }
 
 main();
